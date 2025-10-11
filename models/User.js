@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["joobseeker", "employer"],
+      enum: ["jobseeker", "employer"],
       required: [true, "Vui lòng chọn vai trò"],
     },
     avatar: String,
