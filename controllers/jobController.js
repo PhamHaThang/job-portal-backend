@@ -38,6 +38,7 @@ exports.getJobs = asyncHandler(async (req, res) => {
     const applications = await Application.find({ applicant: userId }).select(
       "job status"
     );
+    console.log(applications);
     applications.forEach((app) => {
       appliedJobStatusMap[String(app.job)] = app.status;
     });

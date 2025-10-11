@@ -15,7 +15,8 @@ const applicationSchema = new mongoose.Schema(
     resume: { type: String },
     status: {
       type: String,
-      enum: ["Applied", "Accepted", "In Reviewed", "Rejected"],
+      enum: ["Applied", "Accepted", "In Review", "Rejected"],
+      default: "Applied",
     },
   },
   { timestamps: true }
