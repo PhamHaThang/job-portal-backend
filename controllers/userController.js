@@ -4,7 +4,6 @@ const AppError = require("../utils/AppError");
 const { deleteCloudinaryFile } = require("../utils/cloudinary");
 // [PUT] /api/user/profile
 exports.updateProfile = asyncHandler(async (req, res) => {
-  console.log(req.body);
   const { name, avatar, resume, companyName, companyLogo, companyDescription } =
     req.body;
   const user = await User.findById(req.user._id);
