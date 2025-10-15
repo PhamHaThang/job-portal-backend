@@ -58,4 +58,7 @@ const jobSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+jobSchema.index({ company: 1, isClosed: 1 });
+jobSchema.index({ title: "text", description: "text" });
+jobSchema.index({ category: 1, type: 1 });
 module.exports = mongoose.model("Job", jobSchema);

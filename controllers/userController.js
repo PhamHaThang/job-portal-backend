@@ -50,13 +50,7 @@ exports.deleteResume = asyncHandler(async (req, res) => {
   if (!user) {
     throw new AppError(404, "Người dùng không tồn tại", "USER_NOT_FOUND");
   }
-  if (user.role !== "jobseeker") {
-    throw new AppError(
-      400,
-      "Chỉ người tìm việc mới có thể xóa hồ sơ",
-      "INVALID_ROLE"
-    );
-  }
+
   const result = await deleteCloudinaryFile(resumeUrl);
   if (!result.success) {
     throw new AppError(

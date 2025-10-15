@@ -24,3 +24,22 @@ exports.protect = async (req, res, next) => {
     });
   }
 };
+exports.requireRole = (...allowedRoles) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: "Truy cập bị từ chối, không có token",
+        error: "UNAUTHORIZED",
+      });
+    }
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: "Bạn không có quyền truy cập tài nguyên này",
+        error: "FORBIDDEN",
+      });
+    }
+    next();
+  };
+};

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { protect } = require("../middlewares/authMiddleware");
+const { protect, requireRole } = require("../middlewares/authMiddleware");
 const {
   createJob,
   getJobs,
@@ -11,11 +11,16 @@ const {
   getJobsEmployer,
 } = require("../controllers/jobController");
 
-router.post("/", protect, createJob);
+router.post("/", protect, requireRole("employer"), createJob);
 router.get("/", getJobs);
-router.get("/employer", protect, getJobsEmployer);
+router.get("/employer", protect, requireRole("employer"), getJobsEmployer);
 router.get("/:id", getJobById);
-router.put("/:id", protect, updateJob);
-router.delete("/:id", protect, deleteJob);
-router.put("/:id/toggle-close", protect, toggleCloseJob);
+router.put("/:id", protect, requireRole("employer"), updateJob);
+router.delete("/:id", protect, requireRole("employer"), deleteJob);
+router.put(
+  "/:id/toggle-close",
+  protect,
+  requireRole("employer"),
+  toggleCloseJob
+);
 module.exports = router;

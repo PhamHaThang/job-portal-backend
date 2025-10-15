@@ -117,13 +117,6 @@ exports.getJobById = asyncHandler(async (req, res) => {
 
 // [POST] /api/jobs
 exports.createJob = asyncHandler(async (req, res) => {
-  if (!req.user || req.user.role !== "employer") {
-    throw new AppError(
-      403,
-      "Chỉ nhà tuyển dụng mới có thể tạo việc làm",
-      "FORBIDDEN"
-    );
-  }
   const job = await Job.create({ ...req.body, company: req.user._id });
   res
     .status(201)
@@ -131,13 +124,6 @@ exports.createJob = asyncHandler(async (req, res) => {
 });
 // [PUT] /api/jobs/:id
 exports.updateJob = asyncHandler(async (req, res) => {
-  if (!req.user || req.user.role !== "employer") {
-    throw new AppError(
-      403,
-      "Chỉ nhà tuyển dụng mới có thể cập nhật việc làm",
-      "FORBIDDEN"
-    );
-  }
   const job = await Job.findById(req.params.id);
   if (!job) {
     throw new AppError(404, "Không tìm thấy việc làm", "JOB_NOT_FOUND");
@@ -149,6 +135,7 @@ exports.updateJob = asyncHandler(async (req, res) => {
       "FORBIDDEN"
     );
   }
+
   Object.assign(job, req.body);
   await job.save();
   res.json({ success: true, message: "Cập nhật việc làm thành công", job });

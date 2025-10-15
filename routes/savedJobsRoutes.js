@@ -5,8 +5,8 @@ const {
   unsaveJob,
   getMySavedJobs,
 } = require("../controllers/savedJobsController");
-const { protect } = require("../middlewares/authMiddleware");
-router.post("/:jobId", protect, saveJob);
-router.delete("/:jobId", protect, unsaveJob);
-router.get("/my", protect, getMySavedJobs);
+const { protect, requireRole } = require("../middlewares/authMiddleware");
+router.post("/:jobId", protect, requireRole("jobseeker"), saveJob);
+router.delete("/:jobId", protect, requireRole("jobseeker"), unsaveJob);
+router.get("/my", protect, requireRole("jobseeker"), getMySavedJobs);
 module.exports = router;

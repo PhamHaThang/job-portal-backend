@@ -6,13 +6,6 @@ const User = require("../models/User");
 
 // [POST] /api/applications/:jobId
 exports.applyToJob = asyncHandler(async (req, res) => {
-  if (!req.user || req.user.role !== "jobseeker") {
-    throw new AppError(
-      403,
-      "Chỉ người tìm việc mới có thể nộp đơn",
-      "FORBIDDEN"
-    );
-  }
   const existingApplication = await Application.findOne({
     job: req.params.jobId,
     applicant: req.user._id,
@@ -42,13 +35,6 @@ exports.applyToJob = asyncHandler(async (req, res) => {
 });
 // [GET] /api/applications/my
 exports.getMyApplications = asyncHandler(async (req, res) => {
-  if (!req.user || req.user.role !== "jobseeker") {
-    throw new AppError(
-      403,
-      "Chỉ người tìm việc mới có thể xem đơn của họ",
-      "FORBIDDEN"
-    );
-  }
   const applications = await Application.find({ applicant: req.user._id })
     .populate("job", "title company location type")
     .sort({ createdAt: -1 });
@@ -62,13 +48,6 @@ exports.getMyApplications = asyncHandler(async (req, res) => {
 
 // [GET] /api/applications/job/:jobId
 exports.getApplicationsForJob = asyncHandler(async (req, res) => {
-  if (!req.user || req.user.role !== "employer") {
-    throw new AppError(
-      403,
-      "Chỉ nhà tuyển dụng mới có thể xem đơn ứng tuyển",
-      "FORBIDDEN"
-    );
-  }
   const job = await Job.findById(req.params.jobId);
   if (!job) {
     throw new AppError(404, "Công việc không tồn tại", "JOB_NOT_FOUND");

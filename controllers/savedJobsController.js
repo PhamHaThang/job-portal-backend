@@ -6,13 +6,7 @@ exports.saveJob = asyncHandler(async (req, res) => {
   if (!req.params.jobId) {
     throw new AppError(400, "Vui lòng cung cấp jobId", "NO_JOB_ID");
   }
-  if (!req.user || req.user.role !== "jobseeker") {
-    throw new AppError(
-      403,
-      "Chỉ người tìm việc mới có thể lưu công việc",
-      "FORBIDDEN"
-    );
-  }
+
   const existingSavedJob = await SavedJob.findOne({
     jobseeker: req.user._id,
     job: req.params.jobId,
@@ -39,13 +33,6 @@ exports.unsaveJob = asyncHandler(async (req, res) => {
   if (!req.params.jobId) {
     throw new AppError(400, "Vui lòng cung cấp jobId", "NO_JOB_ID");
   }
-  if (!req.user || req.user.role !== "jobseeker") {
-    throw new AppError(
-      403,
-      "Chỉ người tìm việc mới có thể bỏ lưu công việc",
-      "FORBIDDEN"
-    );
-  }
   const savedJob = await SavedJob.findOne({
     jobseeker: req.user._id,
     job: req.params.jobId,
@@ -61,13 +48,6 @@ exports.unsaveJob = asyncHandler(async (req, res) => {
 });
 // [GET] /api/saved-jobs/my
 exports.getMySavedJobs = asyncHandler(async (req, res) => {
-  if (!req.user || req.user.role !== "jobseeker") {
-    throw new AppError(
-      403,
-      "Chỉ người tìm việc mới có thể xem công việc đã lưu",
-      "FORBIDDEN"
-    );
-  }
   const savedJobs = await SavedJob.find({ jobseeker: req.user._id }).populate({
     path: "job",
     populate: { path: "company", select: "name companyName companyLogo" },
