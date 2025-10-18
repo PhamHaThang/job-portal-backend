@@ -5,9 +5,10 @@ const {
   updateProfile,
   deleteResume,
   getPublicProfile,
+  changePassword,
 } = require("../controllers/userController");
 router.put("/profile", protect, updateProfile);
 router.delete("/resume", protect, requireRole("jobseeker"), deleteResume);
-
+router.put("/change-password", protect, changePassword);
 router.get("/:id", getPublicProfile);
 module.exports = router;

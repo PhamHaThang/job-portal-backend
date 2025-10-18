@@ -33,14 +33,13 @@ exports.getJobs = asyncHandler(async (req, res) => {
   let savedJobIds = [];
   let appliedJobStatusMap = {};
   if (userId) {
-    const savedJobs = await SavedJob.find({ jobseeker: userId });
+    const savedJobs = await SavedJob.find({ jobseeker: userId }).select("job");
     savedJobIds = savedJobs.map((sj) => sj.job.toString());
     const applications = await Application.find({ applicant: userId }).select(
       "job status"
     );
-    console.log(applications);
     applications.forEach((app) => {
-      appliedJobStatusMap[String(app.job)] = app.status;
+      appliedJobStatusMap[app.job.toString()] = app.status;
     });
   }
   const jobsWithExtras = jobs.map((job) => {

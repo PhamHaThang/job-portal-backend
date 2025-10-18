@@ -78,3 +78,25 @@ exports.getPublicProfile = asyncHandler(async (req, res) => {
     user,
   });
 });
+// [PUT] /api/user/change-password
+exports.changePassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const user = await User.findById(req.user._id).select("+password");
+  if (!user) {
+    throw new AppError(404, "Người dùng không tồn tại", "USER_NOT_FOUND");
+  }
+  const isMatch = await user.matchPassword(currentPassword);
+  if (!isMatch) {
+    throw new AppError(400, "Mật khẩu hiện tại không đúng", "INVALID_PASSWORD");
+  }
+  if (newPassword.length < 8) {
+    throw new AppError(
+      400,
+      "Mật khẩu mới phải có ít nhất 8 ký tự",
+      "WEAK_PASSWORD"
+    );
+  }
+  user.password = newPassword;
+  await user.save();
+  res.status(200).json({ success: true, message: "Đổi mật khẩu thành công" });
+});
