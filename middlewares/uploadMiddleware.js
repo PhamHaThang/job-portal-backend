@@ -33,7 +33,15 @@ const storage = new CloudinaryStorage({
 
     if (isImage) {
       config.allowed_formats = allowedFormats;
-      config.transformation = [{ width: 500, height: 500, crop: "limit" }];
+      config.transformation = [
+        {
+          width: 800,
+          height: 800,
+          crop: "limit",
+          quality: "auto:good",
+          fetch_format: "auto",
+        },
+      ];
     }
 
     return config;

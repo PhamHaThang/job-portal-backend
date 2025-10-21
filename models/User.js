@@ -30,12 +30,18 @@ const userSchema = new mongoose.Schema(
       enum: ["jobseeker", "employer"],
       required: [true, "Vui lòng chọn vai trò"],
     },
-    avatar: String,
+    avatar: {
+      type: String,
+      default: "",
+    },
     resume: String,
 
     companyName: String,
     companyDescription: String,
-    companyLogo: String,
+    companyLogo: {
+      type: String,
+      default: "",
+    },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
   },
