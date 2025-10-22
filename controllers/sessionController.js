@@ -34,7 +34,12 @@ exports.createSession = asyncHandler(async (req, res) => {
 // [GET] /api/sessions/:id
 exports.getSessionById = asyncHandler(async (req, res) => {
   const sessionId = req.params.id;
-  const session = await Session.findById(sessionId).populate("questions");
+  const session = await Session.findById(sessionId)
+    .populate({
+      path: "questions",
+      options: { sort: { isPinned: -1, createdAt: 1 } },
+    })
+    .exec();
   if (!session) {
     throw new AppError(404, "Phiên không tồn tại");
   }

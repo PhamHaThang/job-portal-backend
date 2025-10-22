@@ -6,6 +6,7 @@ const {
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 const asyncHandler = require("express-async-handler");
 const AppError = require("../utils/AppError");
+const { jsonrepair } = require("jsonrepair");
 exports.generateInterviewQuestions = asyncHandler(async (req, res) => {
   const { role, experience, topicsToFocus, numberOfQuestions } = req.body;
   if (!role || !experience || !topicsToFocus || !numberOfQuestions) {
@@ -26,8 +27,14 @@ exports.generateInterviewQuestions = asyncHandler(async (req, res) => {
     .replace(/^```json\s*/, "")
     .replace(/```$/, "")
     .trim();
-  const data = JSON.parse(cleanedText);
-  res.status(200).json({
+  let data;
+  try {
+    const repaired = jsonrepair(cleanedText);
+    data = JSON.parse(repaired);
+  } catch {
+    throw new AppError(500, "Phản hồi AI không hợp lệ, vui lòng thử lại sau");
+  }
+  res.status(201).json({
     success: true,
     message: "Tạo câu hỏi phỏng vấn thành công",
     questions: data,
@@ -48,10 +55,17 @@ exports.generateConceptExplanation = asyncHandler(async (req, res) => {
     .replace(/^```json\s*/, "")
     .replace(/```$/, "")
     .trim();
-  const data = JSON.parse(cleanedText);
-  res.status(200).json({
+  let data;
+  console.log(cleanedText);
+  try {
+    const repaired = jsonrepair(cleanedText);
+    data = JSON.parse(repaired);
+  } catch {
+    throw new AppError(500, "Phản hồi AI không hợp lệ, vui lòng thử lại sau");
+  }
+  res.status(201).json({
     success: true,
-    message: "Tạo câu hỏi phỏng vấn thành công",
+    message: "Tạo câu trả lời thành công",
     explanation: data,
   });
 });

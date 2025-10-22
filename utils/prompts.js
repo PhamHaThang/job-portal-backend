@@ -1,48 +1,46 @@
 const questionAnswerPrompt = (
-  role,
-  experience,
-  topicsToFocus,
-  numberOfQuestions
+  role = "Vị trí chưa xác định",
+  experience = 0,
+  topicsToFocus = "Không có chủ đề trọng tâm",
+  numberOfQuestions = 5
 ) => `
-  You are an AI trained to generate interview questions and answers.
+  Bạn là AI chuyên tạo bộ câu hỏi phỏng vấn và câu trả lời.
+  Yêu cầu đầu ra:
+  - Ngôn ngữ: tiếng Việt.
+  - Trả về JSON THUẦN  dạng mảng, mỗi phần tử gồm "question" và "answer".
+  - Tuyệt đối KHÔNG thêm văn bản, lời mở đầu hay giải thích ngoài JSON.
 
-  Task:
+  Thông tin đầu vào:
+  - Vị trí: ${role}
+  - Số năm kinh nghiệm ứng viên: ${experience}
+  - Chủ đề cần tập trung: ${topicsToFocus}
+  - Số câu hỏi: ${numberOfQuestions}
 
-  - Role: ${role}
-  - Candidate Experience: ${experience} years
-  - Topics to Focus On: ${topicsToFocus}
-  - Write ${numberOfQuestions} interview questions along with their detailed answers.
-  - For each question, generate a detailed but beginner-friendly answer.
-  - If the answer needs a code example, a small code block inside markdown format should be provided.
-  - Keep formatting vert clean, clear and easy to read.
-  - Return a pure JSON array like below:
-  [
+  Hướng dẫn chi tiết:
+  - Mỗi câu trả lời cần dễ hiểu với người mới.
+  - Nếu cần code, chèn Markdown code block nhỏ.
+  - Format sạch, rõ ràng, dễ đọc.
+  - Đảm bảo JSON hợp lệ, không chứa ký tự điều khiển lạ.
+`;
+
+const conceptExplainPrompt = (question = "Câu hỏi phỏng vấn chưa xác định") => `
+  Bạn là AI giải thích kiến thức phỏng vấn cho người mới.
+  Yêu cầu đầu ra:
+  - Ngôn ngữ: tiếng Việt.
+  - Trả về JSON THUẦN gồm:
     {
-      "question": "Question here?",
-      "answer": "Answer here."
-    },
-    ...
-  ]
-    Important: Do NOT add any extra text outside the JSON array. Only return valid JSON. Reponse should be in Vietnamese.
-`;
-const conceptExplainPrompt = (
-  question
-) => `You are an AI trained to generate explainations for a given interview question.
+      "title": "Tiêu đề ngắn gọn",
+      "explanation": "Giải thích chi tiết"
+    }
+  - Tuyệt đối KHÔNG thêm văn bản, lời mở đầu hay giải thích ngoài JSON.
 
-  Task:
-
-  - Explain the following interview question and its concept in depth as if you are teaching a beginner.
-  - Question: ${question}
-  - After the explanation, provide a short and clear title that summarizes the concept for the article or page header.
-  - If the explanation needs a code example, a small code block inside markdown format should be provided.
-  - Keep formatting vert clean, clear and easy to read.
-  - Return a pure JSON array like below:
-  {
-    "title": "Short title here?",
-    "explanation": "Explanation here."
-  }
-  Important: Do NOT add any extra text outside the JSON array. Only return valid JSON. Reponse should be in Vietnamese.
+  Nhiệm vụ:
+  - Giải thích sâu, dễ hiểu về câu hỏi sau: ${question}
+  - Có thể chèn code block Markdown nếu cần.
+  - Format sạch, rõ ràng, dễ đọc.
+  - Đảm bảo JSON hợp lệ, không chứa ký tự điều khiển lạ.
 `;
+
 module.exports = {
   questionAnswerPrompt,
   conceptExplainPrompt,
