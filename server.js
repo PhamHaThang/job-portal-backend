@@ -24,9 +24,7 @@ app.use((req, res, next) => {
   next();
 });
 // Routes
-app.options("*", (req, res) => {
-  res.sendStatus(200);
-});
+
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
