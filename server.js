@@ -24,6 +24,9 @@ app.use((req, res, next) => {
   next();
 });
 // Routes
+app.options("*", (req, res) => {
+  res.sendStatus(200);
+});
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
@@ -35,3 +38,4 @@ app.use(errorHandler);
     console.log(`Server running on http://localhost:${PORT}`);
   });
 })();
+module.exports = app;
