@@ -76,7 +76,7 @@ exports.createResume = asyncHandler(async (req, res) => {
     ...defaultResumeData,
   });
   res.status(201).json({
-    sucess: true,
+    success: true,
     message: "Tạo mới CV thành công",
     resume: newResume,
   });
