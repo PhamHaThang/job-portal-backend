@@ -3,6 +3,10 @@ const asyncHandler = require("express-async-handler");
 const Application = require("../models/Application");
 const Job = require("../models/Job");
 const User = require("../models/User");
+const {
+  createApplicationStatusNotification,
+  createNewApplicationNotification,
+} = require("../utils/notificationHelper");
 
 // [POST] /api/applications/:jobId
 exports.applyToJob = asyncHandler(async (req, res) => {
@@ -27,6 +31,16 @@ exports.applyToJob = asyncHandler(async (req, res) => {
     resume: req.user.resume,
   });
   await newApplication.save();
+
+  if (job.company) {
+    await createNewApplicationNotification(
+      job.company,
+      req.user.name,
+      job.title,
+      job._id
+    );
+  }
+
   res.status(201).json({
     success: true,
     message: "Nộp đơn thành công",
@@ -36,7 +50,14 @@ exports.applyToJob = asyncHandler(async (req, res) => {
 // [GET] /api/applications/my
 exports.getMyApplications = asyncHandler(async (req, res) => {
   const applications = await Application.find({ applicant: req.user._id })
-    .populate("job", "title company location type")
+    .populate({
+      path: "job",
+      select: "title company location type category",
+      populate: {
+        path: "company",
+        select: "name companyName companyLogo",
+      },
+    })
     .sort({ createdAt: -1 });
   res.status(200).json({
     success: true,
@@ -103,9 +124,9 @@ exports.getApplicationById = asyncHandler(async (req, res) => {
 exports.updateStatus = asyncHandler(async (req, res) => {
   const { status } = req.body;
 
-  const application = await Application.findById(
-    req.params.applicationId
-  ).populate("job");
+  const application = await Application.findById(req.params.applicationId)
+    .populate("job")
+    .populate("applicant", "name email");
   if (!application) {
     throw new AppError(
       404,
@@ -127,8 +148,19 @@ exports.updateStatus = asyncHandler(async (req, res) => {
       "FORBIDDEN"
     );
   }
+  const oldStatus = application.status;
   application.status = status;
   await application.save();
+
+  if (oldStatus !== status) {
+    await createApplicationStatusNotification(
+      application.applicant,
+      status,
+      application.job.title,
+      application.job._id
+    );
+  }
+
   res.status(200).json({
     success: true,
     message: "Cập nhật trạng thái đơn ứng tuyển thành công",

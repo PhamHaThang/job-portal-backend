@@ -4,7 +4,6 @@ const Job = require("../models/Job");
 const User = require("../models/User");
 const Application = require("../models/Application");
 const SavedJob = require("../models/SavedJob");
-
 // [GET] /api/jobs
 exports.getJobs = asyncHandler(async (req, res) => {
   const { keyword, location, category, type, minSalary, maxSalary, userId } =
