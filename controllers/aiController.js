@@ -19,24 +19,36 @@ exports.generateQuestionAnswerSession = asyncHandler(async (req, res) => {
     topicsToFocus,
     numberOfQuestions
   );
-  const response = await puter.ai.chat(
-    [
-      {
-        role: "system",
-        content: "Bạn là AI chuyên tạo câu hỏi phỏng vấn.",
-      },
-      { role: "user", content: prompt },
-    ],
-    { model: "gpt-5-nano" }
-  );
-  const raw =
-    typeof response === "string" ? response : response?.message?.content || "";
-  const parsed = parseJSONResponse(raw);
-  res.status(201).json({
-    success: true,
-    message: "Tạo buổi hỏi đáp thành công.",
-    questions: parsed,
-  });
+
+  try {
+    const response = await puter.ai.chat(
+      [
+        {
+          role: "system",
+          content: "Bạn là AI chuyên tạo câu hỏi phỏng vấn.",
+        },
+        { role: "user", content: prompt },
+      ],
+      { model: "gpt-5-nano" }
+    );
+    const raw =
+      typeof response === "string"
+        ? response
+        : response?.message?.content || "";
+    const parsed = parseJSONResponse(raw);
+    res.status(201).json({
+      success: true,
+      message: "Tạo buổi hỏi đáp thành công.",
+      questions: parsed,
+    });
+  } catch (error) {
+    console.error("Puter AI Error:", error.message);
+    throw new AppError(
+      503,
+      "Dịch vụ AI tạm thời không khả dụng. Vui lòng thử lại sau.",
+      "AI_SERVICE_UNAVAILABLE"
+    );
+  }
 });
 
 exports.generateConceptExplainSession = asyncHandler(async (req, res) => {
@@ -45,22 +57,34 @@ exports.generateConceptExplainSession = asyncHandler(async (req, res) => {
     throw new AppError(400, "Vui lòng cung cấp đầy đủ thông tin yêu cầu");
   }
   const prompt = conceptExplainPrompt(question);
-  const response = await puter.ai.chat(
-    [
-      {
-        role: "system",
-        content: "Bạn là trợ lý giải thích kiến thức phỏng vấn.",
-      },
-      { role: "user", content: prompt },
-    ],
-    { model: "gpt-5-nano" }
-  );
-  const raw =
-    typeof response === "string" ? response : response?.message?.content || "";
-  const parsed = parseJSONResponse(raw);
-  res.status(201).json({
-    success: true,
-    message: "Tạo câu trả lời thành công",
-    explanation: parsed,
-  });
+
+  try {
+    const response = await puter.ai.chat(
+      [
+        {
+          role: "system",
+          content: "Bạn là trợ lý giải thích kiến thức phỏng vấn.",
+        },
+        { role: "user", content: prompt },
+      ],
+      { model: "gpt-5-nano" }
+    );
+    const raw =
+      typeof response === "string"
+        ? response
+        : response?.message?.content || "";
+    const parsed = parseJSONResponse(raw);
+    res.status(201).json({
+      success: true,
+      message: "Tạo câu trả lời thành công",
+      explanation: parsed,
+    });
+  } catch (error) {
+    console.error("Puter AI Error:", error.message);
+    throw new AppError(
+      503,
+      "Dịch vụ AI tạm thời không khả dụng. Vui lòng thử lại sau.",
+      "AI_SERVICE_UNAVAILABLE"
+    );
+  }
 });

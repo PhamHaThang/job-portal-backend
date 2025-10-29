@@ -32,8 +32,9 @@ app.use("/api", router);
 app.use(errorHandler);
 (async () => {
   await database.connect();
-  app.listen(PORT, () => {
+  app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Accessible from Android emulator at http://10.0.2.2:${PORT}`);
   });
 })();
 module.exports = app;

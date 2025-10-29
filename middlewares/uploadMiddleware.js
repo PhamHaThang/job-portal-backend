@@ -133,7 +133,53 @@ const multipleUpload =
       next();
     });
   };
+
+const pdfMemoryUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024, files: 1 },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === "application/pdf") {
+      return cb(null, true);
+    }
+    const error = new Error("Chỉ hỗ trợ tệp PDF cho chức năng phân tích CV");
+    error.code = "INVALID_FILE_TYPE";
+    return cb(error, false);
+  },
+});
+
+const singlePdfMemoryUpload = (fieldName) => (req, res, next) => {
+  const uploadSingle = pdfMemoryUpload.single(fieldName);
+  uploadSingle(req, res, (err) => {
+    if (err) {
+      console.log("Lỗi Upload PDF Memory:", err);
+      let errorMessage = err.message;
+      if (err.code === "LIMIT_FILE_SIZE") {
+        errorMessage = "Kích thước tệp vượt quá 5MB";
+      } else if (err.code === "INVALID_FILE_TYPE") {
+        errorMessage = err.message;
+      } else if (err instanceof multer.MulterError) {
+        errorMessage = "Lỗi khi tải lên tệp";
+      }
+      return res.status(400).json({
+        success: false,
+        message: errorMessage,
+        error: err.code || "UPLOAD_ERROR",
+      });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Không có tệp nào được tải lên",
+        error: "NO_FILE_UPLOADED",
+      });
+    }
+    next();
+  });
+};
+
 module.exports = {
   singleUpload,
   multipleUpload,
+  singlePdfMemoryUpload,
 };

@@ -95,6 +95,7 @@ exports.getJobById = asyncHandler(async (req, res) => {
     throw new AppError(404, "Không tìm thấy việc làm", "JOB_NOT_FOUND");
   }
   let applicationStatus = null;
+  let isApplied = false;
   if (req.query.userId) {
     const application = await Application.findOne({
       job: job._id,
@@ -102,12 +103,13 @@ exports.getJobById = asyncHandler(async (req, res) => {
     }).select("status");
     if (application) {
       applicationStatus = application.status;
+      isApplied = true;
     }
   }
   res.json({
     success: true,
     message: "Lấy chi tiết việc làm thành công",
-    job: { ...job.toObject(), applicationStatus },
+    job: { ...job.toObject(), applicationStatus, isApplied },
   });
 });
 
