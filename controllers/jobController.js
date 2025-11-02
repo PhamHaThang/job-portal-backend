@@ -94,9 +94,17 @@ exports.getJobById = asyncHandler(async (req, res) => {
   if (!job) {
     throw new AppError(404, "Không tìm thấy việc làm", "JOB_NOT_FOUND");
   }
+  let isSaved = false;
   let applicationStatus = null;
   let isApplied = false;
   if (req.query.userId) {
+    const savedJob = await SavedJob.findOne({
+      job: job._id,
+      jobseeker: req.query.userId,
+    });
+    if (savedJob) {
+      isSaved = true;
+    }
     const application = await Application.findOne({
       job: job._id,
       applicant: req.query.userId,
@@ -109,7 +117,7 @@ exports.getJobById = asyncHandler(async (req, res) => {
   res.json({
     success: true,
     message: "Lấy chi tiết việc làm thành công",
-    job: { ...job.toObject(), applicationStatus, isApplied },
+    job: { ...job.toObject(), applicationStatus, isApplied, isSaved },
   });
 });
 

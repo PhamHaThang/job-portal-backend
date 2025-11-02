@@ -11,9 +11,15 @@ exports.uploadImage = asyncHandler(async (req, res) => {
     );
   }
   const imageUrl = req.file ? req.file.path : null;
-  res
-    .status(200)
-    .json({ success: true, message: "Tải ảnh lên thành công", imageUrl });
+  res.status(200).json({
+    success: true,
+    message: "Tải ảnh lên thành công",
+    imageUrl,
+    fileUrl: imageUrl,
+    publicId: req.file?.filename,
+    format: req.file?.format,
+    size: req.file?.size,
+  });
 });
 // [POST] /api/upload/pdf
 exports.uploadFile = asyncHandler(async (req, res) => {

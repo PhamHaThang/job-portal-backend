@@ -26,6 +26,10 @@ exports.createSession = asyncHandler(async (req, res) => {
   );
   session.questions = questionDocs;
   await session.save();
+  await session.populate({
+    path: "questions",
+    options: { sort: { createdAt: 1 } },
+  });
   res
     .status(201)
     .json({ success: true, message: "Tạo phiên thành công", session });

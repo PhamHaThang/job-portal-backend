@@ -24,7 +24,7 @@ exports.updateProfile = asyncHandler(async (req, res) => {
     success: true,
     message: "Cập nhật hồ sơ thành công",
     user: {
-      id: user._id,
+      _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
